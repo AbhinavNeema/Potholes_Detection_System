@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pothole Reporting</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+    <div class="container">
+        <h1>Report a Pothole</h1>
+        <div id="initial-choice">
+            <button id="show-upload-btn">Upload Existing Video</button>
+            <button id="show-record-btn">Record Live Video</button>
+        </div>
+
+        <div id="upload-section" class="hidden">
+            <h2>1. Select Video File</h2>
+            <input type="file" id="video-upload" accept="video/*">
+            
+            <div id="location-picker" class="hidden">
+                <h2>2. Pin the Pothole Location</h2>
+                <div id="map"></div>
+                <button id="submit-upload-btn" class="submit-btn">Submit Report</button>
+            </div>
+        </div>
+
+        <div id="record-section" class="hidden">
+            <h2>Record a New Video</h2>
+            <div class="video-container">
+                <video id="video-player" autoplay muted playsinline></video>
+            </div>
+            <div class="controls">
+                <button id="start-record-btn">Start Recording</button>
+                <button id="stop-record-btn" disabled>Stop Recording</button>
+                <button id="submit-record-btn" class="submit-btn hidden">Submit Report</button>
+            </div>
+        </div>
+        <section id="report-section" class="hidden">
+    <h2>Analysis Report</h2>
+    <div id="report-content" class="report-container">
+        </div>
+</section>
+
+        <div id="status-message"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
