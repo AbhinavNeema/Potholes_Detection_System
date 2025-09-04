@@ -103,17 +103,21 @@ def save_pothole_image(frame, box_coords):
     cv2.imwrite(image_path, pothole_img)
     return image_path
 
+
 def save_to_database_mongo(lat, lon, severity, image_path):
     """Constructs and inserts the pothole document into MongoDB."""
     image_filename = os.path.basename(image_path)
-    image_url = f"http://127.0.0.1:5001/images/{image_filename}"
+    
+    
+    host_url = os.getenv("FLASK_HOST_URL", "http://127.0.0.1:5001")
+    image_url = f"{host_url}/images/{image_filename}"
     
     pothole_document = {
         "severity": severity,
         "image_url": image_url,
         "location": {"type": "Point", "coordinates": [lon, lat]},
         "timestamp": datetime.datetime.now(datetime.UTC),
-        "status": "unverified"  # NEW: Add this default status
+        "status": "unverified"
     }
     potholes_collection.insert_one(pothole_document)
     print(f"💾 BACKGROUND SAVE: New {severity} pothole at ({lat}, {lon}) saved.")
