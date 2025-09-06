@@ -1,0 +1,5 @@
+names:
+  0: pothole
+path: /Users/abhinav/Desktop/Pothole_Detection/retraining_dataset
+train: images
+val: images

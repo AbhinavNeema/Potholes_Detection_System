@@ -7,6 +7,8 @@ from pymongo import MongoClient
 import certifi
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
+import datetime
+from export import export_data_for_training
 
 st.set_page_config(page_title="Pothole Dashboard", page_icon="📡", layout="wide")
 
@@ -31,7 +33,6 @@ potholes_collection = db.potholes if db is not None else None
 
 @st.cache_data(ttl=600)
 def get_data_from_db():
-    # FIX: Changed 'if not potholes_collection' to 'if potholes_collection is None'
     if potholes_collection is None:
         return pd.DataFrame()
 
@@ -107,6 +108,18 @@ else:
         st.info("No confirmed potholes to display on the map yet.")
 
     st.markdown("---")
+    
+    st.header("✨ MLOps - Retraining Pipeline")
+    with st.expander("Export Verified Data for Model Retraining"):
+        st.info("This tool will export all 'confirmed' potholes into a YOLO-formatted dataset, which can be used to fine-tune and improve the detection model.")
+        if st.button("🚀 Start Export"):
+            if potholes_collection is not None:
+                with st.spinner("Exporting data... This may take a moment."):
+                    export_data_for_training(potholes_collection)
+            else:
+                st.error("Database connection not available.")
+
+    st.markdown("---")
     st.header("Verification Queue")
 
     if potholes_collection is not None:
@@ -115,23 +128,34 @@ else:
         if not pothole_to_verify:
             st.success("🎉 No more potholes to verify! Great work.")
         else:
-            st.write(f"Verifying Pothole ID: `{str(pothole_to_verify['_id'])}`")
+            item_id = str(pothole_to_verify['_id'])
+            st.write(f"Verifying Pothole ID: `{item_id}`")
             st.image(pothole_to_verify['image_url'], caption=f"Severity: {pothole_to_verify['severity']}")
 
             col1, col2 = st.columns(2)
             with col1:
-                if st.button("Confirm Pothole", use_container_width=True, type="primary"):
+                
+                if st.button("Confirm Pothole", use_container_width=True, type="primary", key=f"confirm_{item_id}"):
                     potholes_collection.update_one(
-                        {"_id": ObjectId(pothole_to_verify['_id'])},
+                        {"_id": ObjectId(item_id)},
                         {"$set": {"status": "confirmed"}}
                     )
                     get_data_from_db.clear()
                     st.rerun()
+            
             with col2:
-                if st.button("Reject (Not a Pothole)", use_container_width=True):
+                
+                reject_reason = st.selectbox(
+                    "Reject Reason",
+                    ["Not a Pothole", "Incorrect Bounding Box", "Duplicate"],
+                    index=None,
+                    placeholder="Select a reason to reject...",
+                    key=f"reject_{item_id}"
+                )
+                if reject_reason:
                     potholes_collection.update_one(
-                        {"_id": ObjectId(pothole_to_verify['_id'])},
-                        {"$set": {"status": "rejected"}}
+                        {"_id": ObjectId(item_id)},
+                        {"$set": {"status": "rejected", "reject_reason": reject_reason}}
                     )
                     get_data_from_db.clear()
                     st.rerun()
