@@ -9,10 +9,7 @@ import streamlit as st
 
 
 def export_data_for_training(potholes_collection):
-    """
-    Fetches confirmed pothole data, downloads images, and creates
-    YOLO-formatted label files for retraining.
-    """
+    
     if potholes_collection is None:
         st.error("Database connection not available.")
         return

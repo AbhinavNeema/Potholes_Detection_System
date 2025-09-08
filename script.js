@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // General UI elements
+   
     const initialChoice = document.getElementById('initial-choice');
     const statusMessage = document.getElementById('status-message');
-    // NEW: Get the report section
+    
     const reportSection = document.getElementById('report-section');
 
-    // --- Upload Section Elements ---
+    
     const showUploadBtn = document.getElementById('show-upload-btn');
     const uploadSection = document.getElementById('upload-section');
     const videoUpload = document.getElementById('video-upload');
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let marker;
     let uploadedFile = null;
 
-    // --- Record Section Elements ---
     const showRecordBtn = document.getElementById('show-record-btn');
     const recordSection = document.getElementById('record-section');
     const videoPlayer = document.getElementById('video-player');
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let recordedVideoBlob = null;
 
 
-    // --- UI Logic ---
+    
     showUploadBtn.addEventListener('click', () => {
         initialChoice.classList.add('hidden');
         uploadSection.classList.remove('hidden');
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- UPLOAD VIDEO LOGIC ---
+    
     videoUpload.addEventListener('change', (event) => {
         uploadedFile = event.target.files[0];
         if (uploadedFile) {
@@ -93,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.error);
             }
             console.log('Success:', data);
-            // MODIFIED: Call the new function to display the report
+            
             displayReport(data);
         })
         .catch(error => {
@@ -104,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- RECORD LIVE VIDEO LOGIC ---
+    
     startRecordBtn.addEventListener('click', async () => {
         statusMessage.textContent = '';
         if (!('geolocation' in navigator)) {
